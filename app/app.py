@@ -428,10 +428,12 @@ def national_analysis():
         
         # count the number of votes for each political parties
         count_votes_per_party = df_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
         # create a dataframe with the count of votes for each political parties
         votes_df = pd.DataFrame(count_votes_per_party).reset_index()
         # add all the counts 
         total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
         # calculate the percentage of votes for each political parties
         count_votes_per_tendency = df_candidates.groupby(['Tendency'])['Voix'].sum()
         count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
@@ -843,10 +845,12 @@ def regionAnalysis():
         # count the number of votes for each political parties
         df_region_candidates = df_candidates[df_candidates['Région'] == selected_region]
         count_votes_per_party = df_region_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
         # create a dataframe with the count of votes for each political parties
         votes_df = pd.DataFrame(count_votes_per_party).reset_index()
         # add all the counts 
         total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
         # calculate the percentage of votes for each political parties
         count_votes_per_tendency = df_region_candidates.groupby(['Tendency'])['Voix'].sum()
         count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
@@ -1264,10 +1268,12 @@ def departmentAnalysis():
         df_region_candidates = df_candidates[df_candidates['Région'] == selected_region]
         df_department_candidates = df_region_candidates[df_region_candidates["Département"] == selected_departement]
         count_votes_per_party = df_department_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
         # create a dataframe with the count of votes for each political parties
         votes_df = pd.DataFrame(count_votes_per_party).reset_index()
         # add all the counts 
         total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
         # calculate the percentage of votes for each political parties
         count_votes_per_tendency = df_department_candidates.groupby(['Tendency'])['Voix'].sum()
         count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
@@ -1685,10 +1691,12 @@ def cityAnalysis():
         df_department_candidates = df_region_candidates[df_region_candidates["Département"] == selected_departement]
         df_city_candidates = df_department_candidates[df_department_candidates["Commune"] == selected_city]
         count_votes_per_party = df_city_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
         # create a dataframe with the count of votes for each political parties
         votes_df = pd.DataFrame(count_votes_per_party).reset_index()
         # add all the counts 
         total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
         # calculate the percentage of votes for each political parties
         count_votes_per_tendency = df_city_candidates.groupby(['Tendency'])['Voix'].sum()
         count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
