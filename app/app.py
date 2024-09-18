@@ -185,10 +185,60 @@ page = st.sidebar.selectbox("Go to", [
 
 # Page functions
 def page_home():
-    st.title("Homepage")
-    st.write("Welcome to the analysis of Second Turn Confrontations of the French Anticipated Legislative Election of 2024!")
+    # st.title("Homepage")
+    # st.write("Welcome to the analysis of Second Turn Confrontations of the French Anticipated Legislative Election of 2024!")
     
+
+    st.title("French Anticipated Legislative Election: Second Round Insights")
     
+    st.markdown("Welcome to our interactive analysis of the 2024 French Anticipated Legislative Election!\n\n")	
+    st.markdown("This application provides a comprehensive look at the results of the second round, allowing you to explore voter turnout, candidate profiles, and the distribution of parliamentary seats.")
+
+    st.markdown("---")
+
+    st.subheader("Examples of Interesting Data to Explore:")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # Example 2: Distribution of Candidates by Gender
+        fig_gender = px.pie(
+            df_unique_candidates, 
+            names='Sexe',
+            title="Proportion of Male and Female Candidates",
+            hole=0.3,  # Create a donut chart
+            color_discrete_sequence=[COLOR_PALETTE["Burgundy"], COLOR_PALETTE["Cream"]] 
+        )
+        fig_gender.update_traces(textinfo='percent+label')
+        st.plotly_chart(fig_gender, use_container_width=True)
+
+    with col2:
+        # Example 3: Distribution of Seats by Political Tendency 
+        tendency_seat_count = df_elected["Tendency"].value_counts()
+        fig_seats = px.bar(
+            tendency_seat_count, 
+            x=tendency_seat_count.index, 
+            y=tendency_seat_count.values,
+            color=tendency_seat_count.index,
+            color_discrete_map=palette_nuances,
+            title="Distribution of Seats by Political Tendency"
+        )
+        st.plotly_chart(fig_seats, use_container_width=True)
+
+    st.markdown("---")
+
+    st.subheader("Key Questions Answered:")
+
+    st.markdown(
+        """
+        * **What was the overall voter turnout?** 
+        * **How did different regions vote?**
+        * **Which parties secured the most seats?**
+        * **What is the gender balance in the newly elected parliament?**
+        """
+    )
+
+    st.markdown("Navigate through the different sections of the app using the sidebar to delve into these questions and more.")
 
 def national_analysis():
     
