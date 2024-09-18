@@ -21,7 +21,7 @@ This Streamlit app provides interactive visualizations and analysis of the antic
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/RonanRibouletPython/Election_Analysis_App
 
 2. **Install dependencies using Poetry:**
     ```bash
@@ -35,7 +35,7 @@ This Streamlit app provides interactive visualizations and analysis of the antic
 
 1. **Start the Streamlit app:**
     ```bash
-    streamlit run app.py
+    poetry run streamlit run app.py
 
 The app will open in your default web browser.
 
@@ -60,7 +60,7 @@ The app will be accessible at http://localhost:8501 in your browser.
 * **Dockerfile:** Instructions for building the Docker image.
 
 ## Data Sources
-[[Source 1 (link to your data source)](https://www.data.gouv.fr/fr/pages/donnees-des-elections/)]
+[[Source of the election data](https://www.data.gouv.fr/fr/pages/donnees-des-elections/)]
 
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request if you have any suggestions or improvements.
