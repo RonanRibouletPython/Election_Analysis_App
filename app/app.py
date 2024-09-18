@@ -424,6 +424,61 @@ def national_analysis():
         tendency_count = df_elected["Tendency"].value_counts()
         tendency_by_gender = df_elected.groupby('Sexe')['Nuance',].value_counts().unstack(fill_value=0)
         
+        st.subheader("Distribution of Votes")
+        
+        # count the number of votes for each political parties
+        count_votes_per_party = df_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
+        # create a dataframe with the count of votes for each political parties
+        votes_df = pd.DataFrame(count_votes_per_party).reset_index()
+        # add all the counts 
+        total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
+        # calculate the percentage of votes for each political parties
+        count_votes_per_tendency = df_candidates.groupby(['Tendency'])['Voix'].sum()
+        count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
+        
+        # Create the Plotly bar chart 
+        fig = px.bar(votes_df,
+            x='Nuance',                 
+            y='Voix',             
+            color='Tendency',
+            color_discrete_map=palette_nuances,
+            title="Count of Votes by Political Nuances/Tendencies", 
+            labels={'x': 'Political Tendency', 'y': 'Number of Votes'},
+            category_orders={"Tendency": tendencies_plot_order}
+        )
+
+        fig.update_layout(
+            xaxis_title="Political Parties",
+            yaxis_title="Number of Votes",
+            showlegend=True,
+            plot_bgcolor='white',
+            legend_title_text='Tendencies'
+        )
+
+        fig.update_traces(texttemplate='%{y:.0f}', textposition='outside') 
+        st.plotly_chart(fig)
+
+        fig = px.pie(
+                    count_votes_per_tendency, 
+                    values='Voix', 
+                    names=count_votes_per_tendency.index,
+                    color=count_votes_per_tendency.index,
+                    color_discrete_map=palette_nuances,  
+                    hole=0.5, 
+                    title='Distribution of Political Tendencies' ,
+                    category_orders={"Tendency": tendencies_plot_order}
+        )
+        fig.update_layout(
+            showlegend=True,  # Display the legend
+            legend_title_text='Tendencies'
+        )
+        fig.update_traces(textinfo='percent', 
+                        rotation=180,
+                        ) 
+        st.plotly_chart(fig)
+        
         # Display the subtitle of the Ballot Analysis
         st.subheader("Elected MP Gender Analysis")
         
@@ -469,15 +524,15 @@ def national_analysis():
             )
 
             fig.update_traces(textinfo='percent+label',)
-            st.plotly_chart(fig)    
+            st.plotly_chart(fig) 
+        
+        st.markdown("---")  # Horizontal separator
         
         # Display the subtitle of the Candidate Affiliations
         st.subheader("Overview of French Legislative Elected MP Affiliations")
         
         total_parties = df_elected["Nuance"].nunique()
-        st.metric("Total Number of Parties or Political Alliances", f"{total_parties}")
-        
-        st.markdown("---")  # Horizontal separator
+        st.metric("Total Number of Parties or Political Elected", f"{total_parties}")
         
         fig = px.histogram(df_elected, 
                         x="Nuance", 
@@ -524,11 +579,9 @@ def national_analysis():
 
         
         # Display the chart using Streamlit
-        st.plotly_chart(fig)
+        st.plotly_chart(fig) 
         
         st.markdown("---")  # Horizontal separator
-        
-        
 
 def regionAnalysis():
     regions = df['Libellé_Région'].unique()
@@ -786,6 +839,63 @@ def regionAnalysis():
         male_mp = sex_counts.get("MASCULIN", 0)
         female_mp = sex_counts.get("FEMININ", 0)
         # Display the subtitle of the Ballot Analysis
+        
+        st.subheader("Distribution of Votes")
+        
+        # count the number of votes for each political parties
+        df_region_candidates = df_candidates[df_candidates['Région'] == selected_region]
+        count_votes_per_party = df_region_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
+        # create a dataframe with the count of votes for each political parties
+        votes_df = pd.DataFrame(count_votes_per_party).reset_index()
+        # add all the counts 
+        total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
+        # calculate the percentage of votes for each political parties
+        count_votes_per_tendency = df_region_candidates.groupby(['Tendency'])['Voix'].sum()
+        count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
+        
+        # Create the Plotly bar chart 
+        fig = px.bar(votes_df,
+            x='Nuance',                 
+            y='Voix',             
+            color='Tendency',
+            color_discrete_map=palette_nuances,
+            title="Distribution of Votes by Political Tendency", 
+            labels={'x': 'Political Tendency', 'y': 'Number of Votes'},
+            category_orders={"Tendency": tendencies_plot_order}
+        )
+
+        fig.update_layout(
+            xaxis_title="Political Parties",
+            yaxis_title="Number of Votes",
+            showlegend=True,
+            plot_bgcolor='white',
+            legend_title_text='Tendencies'
+        )
+
+        fig.update_traces(texttemplate='%{y:.0f}', textposition='outside') 
+        st.plotly_chart(fig)
+
+        fig = px.pie(
+                    count_votes_per_tendency, 
+                    values='Voix', 
+                    names=count_votes_per_tendency.index,
+                    color=count_votes_per_tendency.index,
+                    color_discrete_map=palette_nuances,  
+                    hole=0.5, 
+                    title='Distribution of Political Tendencies' ,
+                    category_orders={"Tendency": tendencies_plot_order}
+        )
+        fig.update_layout(
+            showlegend=True,  # Display the legend
+            legend_title_text='Tendencies'
+        )
+        fig.update_traces(textinfo='percent', 
+                        rotation=180,
+                        ) 
+        st.plotly_chart(fig)
+        
         st.subheader("Elected MP Gender Analysis")
         
         # --- Layout for Key Metrics ---
@@ -830,7 +940,7 @@ def regionAnalysis():
             )
 
             fig.update_traces(textinfo='percent+label',)
-            st.plotly_chart(fig)    
+            st.plotly_chart(fig)   
         
         # Display the subtitle of the Candidate Affiliations
         st.subheader("Overview of French Legislative Elected MP Affiliations")
@@ -1151,6 +1261,63 @@ def departmentAnalysis():
         male_mp = sex_counts.get("MASCULIN", 0)
         female_mp = sex_counts.get("FEMININ", 0)
         #tendency_by_gender = df_region_elu.groupby('Sexe')['Nuance',].value_counts().unstack(fill_value=0)     
+        
+        st.subheader("Distribution of Votes")
+        
+        # count the number of votes for each political parties
+        df_region_candidates = df_candidates[df_candidates['Région'] == selected_region]
+        df_department_candidates = df_region_candidates[df_region_candidates["Département"] == selected_departement]
+        count_votes_per_party = df_department_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
+        # create a dataframe with the count of votes for each political parties
+        votes_df = pd.DataFrame(count_votes_per_party).reset_index()
+        # add all the counts 
+        total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
+        # calculate the percentage of votes for each political parties
+        count_votes_per_tendency = df_department_candidates.groupby(['Tendency'])['Voix'].sum()
+        count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
+        
+        # Create the Plotly bar chart 
+        fig = px.bar(votes_df,
+            x='Nuance',                 
+            y='Voix',             
+            color='Tendency',
+            color_discrete_map=palette_nuances,
+            title="Distribution of Votes by Political Tendency", 
+            labels={'x': 'Political Tendency', 'y': 'Number of Votes'},
+            category_orders={"Tendency": tendencies_plot_order}
+        )
+
+        fig.update_layout(
+            xaxis_title="Political Parties",
+            yaxis_title="Number of Votes",
+            showlegend=True,
+            plot_bgcolor='white',
+            legend_title_text='Tendencies'
+        )
+
+        fig.update_traces(texttemplate='%{y:.0f}', textposition='outside') 
+        st.plotly_chart(fig)
+
+        fig = px.pie(
+                    count_votes_per_tendency, 
+                    values='Voix', 
+                    names=count_votes_per_tendency.index,
+                    color=count_votes_per_tendency.index,
+                    color_discrete_map=palette_nuances,  
+                    hole=0.5, 
+                    title='Distribution of Political Tendencies' ,
+                    category_orders={"Tendency": tendencies_plot_order}
+        )
+        fig.update_layout(
+            showlegend=True,  # Display the legend
+            legend_title_text='Tendencies'
+        )
+        fig.update_traces(textinfo='percent', 
+                        rotation=180,
+                        ) 
+        st.plotly_chart(fig)
         
         st.subheader("Elected MP Gender Analysis")
         # --- Layout for Key Metrics ---
@@ -1516,6 +1683,64 @@ def cityAnalysis():
         male_mp = sex_counts.get("MASCULIN", 0)
         female_mp = sex_counts.get("FEMININ", 0)
         #tendency_by_gender = df_region_elu.groupby('Sexe')['Nuance',].value_counts().unstack(fill_value=0)     
+        
+        st.subheader("Distribution of Votes")
+        
+        # count the number of votes for each political parties
+        df_region_candidates = df_candidates[df_candidates['Région'] == selected_region]
+        df_department_candidates = df_region_candidates[df_region_candidates["Département"] == selected_departement]
+        df_city_candidates = df_department_candidates[df_department_candidates["Commune"] == selected_city]
+        count_votes_per_party = df_city_candidates.groupby(['Tendency', 'Nuance'])['Voix'].sum()
+        count_votes_per_party.head(count_votes_per_party.shape[0])
+        # create a dataframe with the count of votes for each political parties
+        votes_df = pd.DataFrame(count_votes_per_party).reset_index()
+        # add all the counts 
+        total_votes = count_votes_per_party.sum()
+        print(f"Total number of votes: {total_votes}")
+        # calculate the percentage of votes for each political parties
+        count_votes_per_tendency = df_city_candidates.groupby(['Tendency'])['Voix'].sum()
+        count_votes_per_tendency.apply(lambda x: x / total_votes * 100)
+        
+        # Create the Plotly bar chart 
+        fig = px.bar(votes_df,
+            x='Nuance',                 
+            y='Voix',             
+            color='Tendency',
+            color_discrete_map=palette_nuances,
+            title="Distribution of Votes by Political Tendency", 
+            labels={'x': 'Political Tendency', 'y': 'Number of Votes'},
+            category_orders={"Tendency": tendencies_plot_order}
+        )
+
+        fig.update_layout(
+            xaxis_title="Political Parties",
+            yaxis_title="Number of Votes",
+            showlegend=True,
+            plot_bgcolor='white',
+            legend_title_text='Tendencies'
+        )
+
+        fig.update_traces(texttemplate='%{y:.0f}', textposition='outside') 
+        st.plotly_chart(fig)
+
+        fig = px.pie(
+                    count_votes_per_tendency, 
+                    values='Voix', 
+                    names=count_votes_per_tendency.index,
+                    color=count_votes_per_tendency.index,
+                    color_discrete_map=palette_nuances,  
+                    hole=0.5, 
+                    title='Distribution of Political Tendencies' ,
+                    category_orders={"Tendency": tendencies_plot_order}
+        )
+        fig.update_layout(
+            showlegend=True,  # Display the legend
+            legend_title_text='Tendencies'
+        )
+        fig.update_traces(textinfo='percent', 
+                        rotation=180,
+                        ) 
+        st.plotly_chart(fig)
         
         st.subheader("Elected MP Gender Analysis")
         # --- Layout for Key Metrics ---
